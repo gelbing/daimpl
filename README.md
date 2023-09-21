@@ -30,22 +30,24 @@ Using multiple Networks would suit the case better in order to simulate individu
 Disconnecting the connectors provides almost the same functionality. 
 We ensured that the behaviour is the same disconnecting connectors from the database as cutting the connection from each connector to kafka individually as well as interrupting the sync job by loosing connection.
 
-To run the disconnect just type the following command. This disconnects the first n clients but always the Server. 
+To run the disconnect just type the following command. This disconnects the first *n* clients but always the Server. 
 We only tested this with using he same n as for the run command
 
 	make disconnect n=<num_clients>
 
 Changes that are made now are not beeing propagated. 
-As we create timestamps on clients, conflicts can now be created by ordering changes. 
+As we create timestamps on clients, conflicts can now be created by performing dual writes, delete-write etc. 
 
+Please notice that on reconnecting, the client with the lowest id most probable will be the fastest to send its changes to kafka (First to reconnect due to for loop)
+
+In case you want to see how the system handles update order you can experiment with changing Items on the higher numbered clients first and then on the lower numbered ones.
 
 to reconnect the clients
 
 	make connect n=<num_clients>
 
-Please notice that on reconnecting, the client with the lowest id most probable will be the fastest to send its changes to kafka (First to reconnect due to for loop)
+they will auto sync once the connectors are ready and continue reading from the server-topic at their last offset.
 
-In case you want to see how the system handles update order you can experiment with changing Items on the higher numbered clients first and then on the lower numbered ones.
 
 ## How to see what happens
 We suggest opening a terminal for each client and one for the server. We provide detailed logs on each component. 
