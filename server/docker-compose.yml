@@ -1,0 +1,80 @@
+version: '3'
+services:
+  zookeeper:
+    image: quay.io/debezium/zookeeper:2.3
+    ports:
+      - 2181:2181
+      - 2888:2888
+      - 3888:3888
+    networks: 
+      - daimpl-network 
+  kafka:
+    image: quay.io/debezium/kafka:2.3
+    ports:
+      - 9092:9092
+    depends_on:
+      - zookeeper
+    environment:
+      - ZOOKEEPER_CONNECT=zookeeper:2181
+    networks: 
+      - daimpl-network 
+  redpanda-console:
+    image: redpandadata/console:v2.3.1
+    ports:
+      - 8080:8080
+    depends_on:
+      - kafka
+    environment:
+      - KAFKA_BROKERS=kafka:9092
+    networks:
+      - daimpl-network
+    restart: on-failure
+  server-postgres:
+    container_name: server-postgres
+    image: quay.io/debezium/postgres:13
+    ports:
+      - 5400:5432
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    networks:
+      - daimpl-network
+  daimpl-sink: 
+    container_name: daimpl-sink
+    build: 
+      context: ./daimpl_sink
+      dockerfile: Dockerfile
+    volumes:
+      - ./daimpl_sink:/app
+    networks:
+      - daimpl-network
+    depends_on:
+      - kafka
+      - server-postgres
+    environment:
+    - BOOTSTRAP_SERVERS=kafka:9092
+    - NUM_CLIENTS=${NUM_CLIENTS}
+    - POSTGRES_USER=postgres
+    - POSTGRES_PASSWORD=postgres
+    - POSTGRES_HOST=server-postgres
+    - POSTGRES_PORT=5432
+    restart: on-failure
+  server-connect:
+    container_name: server-connect
+    image: quay.io/debezium/connect:2.3
+    ports:
+      - "7000:8083"
+    depends_on:
+      - server-postgres
+    environment:
+      - BOOTSTRAP_SERVERS=kafka:9092
+      - CONFIG_STORAGE_TOPIC=my_connect_configs
+      - OFFSET_STORAGE_TOPIC=my_connect_offsets
+      - STATUS_STORAGE_TOPIC=my_connect_statuses
+    networks:
+      - daimpl-network
+networks:
+  daimpl-network: 
+    external: true

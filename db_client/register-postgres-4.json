@@ -1,0 +1,15 @@
+{
+    "name": "client-4-connector",
+    "config": {
+        "connector.class": "io.debezium.connector.postgresql.PostgresConnector",
+        "tasks.max": "1",
+        "database.hostname": "client-4-postgres",
+        "plugin.name": "decoderbufs",
+        "database.port": "5432",
+        "database.user": "postgres",
+        "database.password": "postgres",
+        "database.dbname" : "postgres",
+        "topic.prefix": "client-4-topic",
+        "schema.include.list": "public"
+    }
+}

@@ -1,0 +1,19 @@
+version: '3'
+
+services:
+  streamlit:
+    container_name: streamlit
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - .:/app
+    environment:
+      - BACKEND_HOSTS=${BACKEND_HOSTS}
+    ports:
+      - 8501:8501
+    networks: 
+      - daimpl-network 
+networks:
+  daimpl-network: 
+    external: true

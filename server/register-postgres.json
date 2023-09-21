@@ -1,0 +1,15 @@
+{
+    "name": "server-connector",
+    "config": {
+        "connector.class": "io.debezium.connector.postgresql.PostgresConnector",
+        "tasks.max": "1",
+        "database.hostname": "server-postgres",
+        "plugin.name": "decoderbufs",
+        "database.port": "5432",
+        "database.user": "postgres",
+        "database.password": "postgres",
+        "database.dbname" : "postgres",
+        "topic.prefix": "server-topic",
+        "schema.include.list": "public"
+    }
+}
