@@ -100,9 +100,9 @@ Careful this stops all containers on your machine
 If you want to develop on this project please notice: 
 
 We locked the requirements inside our docker containers. 
-To change it please replace every entry of *requirements.lock.txt* with *requirements.txt* and all Dockerfiles in ([server/daimpl_sink](server/daimpl_sink/Dockerfile), [db_client/backend](db_client/backend/Dockerfile), [streamlit](streamlit/Dockerfile))
+To change it please replace every entry of *requirements.lock.txt* with *requirements.txt* in all Dockerfiles in ([server/daimpl_sink](server/daimpl_sink/Dockerfile), [db_client/backend](db_client/backend/Dockerfile), [streamlit](streamlit/Dockerfile))
 
-To get Typehints in CS Code although working with docker we suggest installing all requirements into a local environment. 
+To get Typehints in VS-Code although working with docker we suggest installing all requirements into a local environment. 
 
 You can do this on Linux with python-venv installed as followed: 
 
